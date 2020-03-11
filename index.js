@@ -1,19 +1,12 @@
-const express = require('express');
-const app = express();
-const router = express.Router();
-const port = 3000;
+const http = require('http');
+const port = process.env.PORT || 3000
 
-// url: http://localhost:3000/
-app.get('/', (request, response) => response.send('Hello World'));
-
-// all routes prefixed with /api
-app.use('/api', router);
-
-// using router.get() to prefix our path
-// url: http://localhost:3000/api/
-router.get('/', (request, response) => {
-  response.json({message: 'Hello, welcome to my server'});
+const server = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/html');
+  res.end('<h1>Hello World</h1>');
 });
 
-// set the server to listen on port 3000
-app.listen(port, () => console.log(`Listening on port ${port}`));
+server.listen(port,() => {
+  console.log(`Server running at port `+port);
+});
