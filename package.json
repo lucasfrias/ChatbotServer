@@ -1,0 +1,14 @@
+{
+  "name": "chatbotserver",
+  "version": "1.0.0",
+  "description": "Chatbot server for CS class 4800",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.17.1"
+  }
+}
