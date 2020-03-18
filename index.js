@@ -9,6 +9,9 @@ app.get('/', function(req, res){
     res.send("Welcome to CS 4800 Server!")
   });
 
+//set port
+var port = process.env.PORT || 3000;
+
 var router = express.Router();             
 
 // middleware
@@ -31,6 +34,5 @@ router.route('/message')
 app.use('/api', router);
 
 //start server
-app.listen(process.env.PORT, '0.0.0.0', function(err) {
-  console.log("Started listening on %s", app.url);
-});
+app.listen(port);
+console.log('Running on port ' + port);
