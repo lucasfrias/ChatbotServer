@@ -36,3 +36,7 @@ app.use('/api', router);
 //start server
 app.listen(port);
 console.log('Running on port ' + port);
+
+server.listen(port,() => {
+  console.log(`Server running at port `+port);
+});
