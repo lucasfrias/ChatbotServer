@@ -10,5 +10,9 @@
   "devDependencies": {
     "body-parser": "*",
     "express": "^4.17.1"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "express": "^4.17.1"
   }
 }
