@@ -10,7 +10,7 @@ app.get('/', function(req, res){
   });
 
 //set port
-var port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 var router = express.Router();             
 
