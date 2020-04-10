@@ -10,11 +10,15 @@
   "devDependencies": {
     "body-parser": "*",
     "express": "^4.17.1",
-    "natural": "^0.6.3"
+    "natural": "^0.6.3",
+    "request": "^2.88.2",
+    "uuid": "^7.0.3"
   },
   "dependencies": {
     "body-parser": "*",
     "express": "^4.17.1",
-    "natural": "^0.6.3"
+    "natural": "^0.6.3",
+    "request": "^2.88.2",
+    "uuid": "^7.0.3"
   }
 }
