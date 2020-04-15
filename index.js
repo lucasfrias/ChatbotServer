@@ -115,10 +115,17 @@ function nlpStemming(message){
 app.use('/api', router);
 
 app.post('/api/posts', verifyToken, (req,res) => {
+  jwt.verify(req.token, 'secretkey', (err,authData) => {
+    if(err) {
+      res.sendStatus(403);
+    }
+    else{
       res.json({
         message: 'Post created ...',
         authData
       });
+    }
+  });
   
 });
 
@@ -138,6 +145,31 @@ app.post('/api/login', (req,res) => {
   });
 });
 
+//FORMAT OF TOKEN
+//Authorization: Bearer <access_token> 
+
+//verify token func (req = request, res = response, next is just next)
+function verifyToken(req, res, next){
+  //retrieve auth header val
+  const bearerHeader = req.headers['authorization'];
+  
+  //check if bearer is undefined
+  if(typeof bearerHeader !== 'undefined'){
+    //split at space
+    const bearer = bearerHeader.split(' '); //turns string into array
+    
+    //get token
+    const bearerToken = bearer[1];
+
+    //set token 
+    req.token = bearerToken;
+    next();
+  }
+  else{
+    //forbidden
+    res.sendStatus(403); //could just put error message but just gonna return 403 error
+  }
+}
 
 //start server
 app.listen(port);
