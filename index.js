@@ -5,12 +5,16 @@ var natural    = require('natural');
 var Request    = require("request");
 const { v4: uuidv4 } = require('uuid');
 
+//create jwt
+var jwt = require('jsonwebtoken');
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get('/', function(req, res){
     res.json({
-      message: "Welcome to CS 4800 Server! You have successfully connected!"
+      message: "Welcome to the API, You connected."
       });
   });
 
@@ -110,6 +114,31 @@ function nlpStemming(message){
 //register routes
 app.use('/api', router);
 
+app.post('/api/posts', verifyToken, (req,res) => {
+      res.json({
+        message: 'Post created ...',
+        authData
+      });
+  
+});
+
+app.post('/api/login', (req,res) => {
+  // Creating a mock user. Usually have to create user and password but will do later
+
+  const user = {
+    id: 1,
+    username: 'Brandon',
+    email: 'brandon@gmail.com'
+  }
+
+  jwt.sign({user: user}, 'secretkey', (err,token) => {
+    res.json({
+      token: token
+    });
+  });
+});
+
+
 //start server
 app.listen(port);
-console.log('Running on port ' + port);
+console.log('Server started on port ' + port);
