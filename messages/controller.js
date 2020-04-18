@@ -17,14 +17,14 @@ function getMessage(req, res, next){
         if(parsedJson.status.code != 200){
           res.json({
             message: "There is an error from the database side!",
-            code: parsedJson.status.code,
+            responseCode: parsedJson.status.code,
             errorType: parsedJson.status.errorType,
             errorDetails: parsedJson.status.errorDetails
           });
         }
         else{res.json({ 
           newMessage: parsedJson.result.fulfillment.speech,
-          statusCode: 200
+          responseCode: 200
         });
       }
     });

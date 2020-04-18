@@ -5,7 +5,7 @@ function errorHandler(err, req, res, next) {
         // custom application error
         return res.json({
             message: err,
-            statusCode: 400
+            responseCode: 400
         });
     }
 
@@ -13,7 +13,7 @@ function errorHandler(err, req, res, next) {
         // mongoose validation error
         return res.json({
             message: err.message,
-            statusCode: 400
+            responseCode: 400
         });
     }
 
@@ -21,13 +21,13 @@ function errorHandler(err, req, res, next) {
         // jwt authentication error
         return res.json({
             message: "Invalid token",
-            statusCode: 401
+            responseCode: 401
         });
     }
 
     // default
     return res.json({
         message: err.message,
-        statusCode: 500
+        responseCode: 500
     });
 }

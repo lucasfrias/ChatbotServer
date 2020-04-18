@@ -19,7 +19,8 @@ app.use('/messages', require('./messages/controller'));
 
 app.get('/', function(req, res){
   res.json({
-    message: "Welcome to the API, You connected."
+    message: "Welcome to the API, You connected.",
+    responseCode: 200
     });
 });
 
