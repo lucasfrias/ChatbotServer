@@ -1,176 +1,33 @@
-var express    = require('express');      
-var app        = express();                 
-var bodyParser = require('body-parser');
-var natural    = require('natural');
-var Request    = require("request");
-const { v4: uuidv4 } = require('uuid');
+require('rootpath')();
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const jwt = require('utility/jwt');
+const errorHandler = require('utility/error-handler');
 
-//create jwt
-var jwt = require('jsonwebtoken');
-
-
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
+
+// use JWT auth
+app.use(jwt());
+
+// api routes
+app.use('/users', require('./users/controller'));
+app.use('/messages', require('./messages/controller'));
 
 app.get('/', function(req, res){
-    res.json({
-      message: "Welcome to the API, You connected."
-      });
-  });
-
-//set port
-const port = process.env.PORT || 3000;
-
-var router = express.Router();             
-
-// middleware
-router.use(function(req, res, next) {
-  // need authentication for requests
-  console.log('Middleware!');
-  //const error = new Error("Not found");
- //error.status = 404;
-  next();
-});
-
-router.use((error, req, res, next) => {
-  res.status(error.status || 500).send({
-    error: {
-      status: error.status || 500,
-      message: error.message || 'Internal Server Error',
-    },
-  });
-});
-
-/*
-GET request using url, http://localhost:8080/api/message
-Heroku app url, https://chatbot-server4800.herokuapp.com/api/message
-*/
-router.post('/message', function(req, res) {
-      callDatabase(req.body.message, function(result){
-        var parsedJson = JSON.parse(result);
-        if(parsedJson.status.code != 200){
-          res.json({
-            message: "There is an error from the database side!",
-            code: parsedJson.status.code,
-            errorType: parsedJson.status.errorType,
-            errorDetails: parsedJson.status.errorDetails
-          });
-        }
-        else{res.json({ 
-          newMessage: parsedJson.result.fulfillment.speech,
-          statusCode: 200
-        });
-      }
+  res.json({
+    message: "Welcome to the API, You connected."
     });
-  });
-
-  /*
-  This method makes an api call to dialog flow created by the database team. A sessionID is a UUID uniquely identified for every request.
-  Authorization header is required for request.
-  */
-function callDatabase(message, callback){ 
-  Request.post({
-    "headers": { 
-      "content-type": "application/json",
-      "Authorization": "Bearer aced3eb074ee44b0956904ec93a46507"},
-    "url": "https://api.dialogflow.com/v1/query?v=20150910",
-    "body": JSON.stringify({
-      "query": message,
-      "sessionId": uuidv4(),
-      "lang":"en"
-    })
-  }, (error, response, body) => {
-    if(error) {
-      const error = new Error("Error from database!");
-      next(error);
-    }
-    callback(body);
-  });
-}
-
-/*
-Natural Language Processing (NLP) is a subfield that studies the interaction between computers and 
-humans (natural) languages. It can process and analyze large amounts of natural language data. 
-Tokenization is a process in which it parses input and classifies sections of a string of input characters.
-This function returns an array of each word in the sentence. 
-*/
-function nlpTokenizing(message){
-  var tokenizer = new natural.WordTokenizer();
-  //console.log(tokenizer.tokenize(message));
-  return tokenizer.tokenize(message);
-}
-
-/*
-Stemming reduces words to their stem/root word. It filters and removes 'stop words', which are 
-common connecting words. Examples include 'the', 'at', 'is', 'which', and more. 
-This function returns an array of each word remaining after stemming filtering.
-*/
-function nlpStemming(message){
-  natural.PorterStemmer.attach();
-  //console.log(message.tokenizeAndStem());
-  return message.tokenizeAndStem();
-}
-
-//register routes
-app.use('/api', router);
-
-app.post('/api/posts', verifyToken, (req,res) => {
-  jwt.verify(req.token, 'secretkey', (err,authData) => {
-    if(err) {
-      res.sendStatus(403);
-    }
-    else{
-      res.json({
-        message: 'Post created ...',
-        authData
-      });
-    }
-  });
-  
 });
 
-app.post('/api/login', (req,res) => {
-  // Creating a mock user. Usually have to create user and password but will do later
+//handle errors
+app.use(errorHandler);
 
-  const user = {
-    id: 1,
-    username: 'Brandon',
-    email: 'brandon@gmail.com'
-  }
-
-  jwt.sign({user: user}, 'secretkey', (err,token) => {
-    res.json({
-      token: token
-    });
-  });
+// start server
+const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 4000;
+const server = app.listen(port, function () {
+    console.log('Server listening on port ' + port);
 });
-
-//FORMAT OF TOKEN
-//Authorization: Bearer <access_token> 
-
-//verify token func (req = request, res = response, next is just next)
-function verifyToken(req, res, next){
-  //retrieve auth header val
-  const bearerHeader = req.headers['authorization'];
-  
-  //check if bearer is undefined
-  if(typeof bearerHeader !== 'undefined'){
-    //split at space
-    const bearer = bearerHeader.split(' '); //turns string into array
-    
-    //get token
-    const bearerToken = bearer[1];
-
-    //set token 
-    req.token = bearerToken;
-    next();
-  }
-  else{
-    //forbidden
-    res.sendStatus(403); //could just put error message but just gonna return 403 error
-  }
-}
-
-//start server
-app.listen(port);
-console.log('Server started on port ' + port);
