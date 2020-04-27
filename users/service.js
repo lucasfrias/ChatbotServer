@@ -8,6 +8,7 @@ module.exports = {
     create,
     getById,
     getAll,
+    deleteUser,
     reAuthenticate
 };
 
@@ -43,6 +44,12 @@ async function create(userParam) {
   async function getAll() {
     return await User.find().select('-hash');
   }
+
+  async function deleteUser(id) {
+    const user = await User.findById(id);
+    if (!user) throw 'User not found';
+    await User.findByIdAndRemove(id);
+}
 
   async function reAuthenticate({ username, password }) {
     const user = await User.findOne({ username });

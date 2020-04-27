@@ -6,6 +6,7 @@ const userService = require('./service');
 router.post('/login', register);
 router.get('/getAll', getAll);
 router.post('/reAuthenticate', reAuthenticate);
+router.delete('/delete/:id', deleteUser)
 
 module.exports = router;
 
@@ -22,6 +23,15 @@ function register(req, res, next) {
 function getAll(req, res, next) {
     userService.getAll()
         .then(users => res.json(users))
+        .catch(err => next(err));
+}
+
+function deleteUser(req, res, next) {
+    userService.deleteUser(req.params.id)
+        .then(() => res.json({
+            message: "User successfully deleted.",
+            responseCode: 200,
+        }))
         .catch(err => next(err));
 }
 
