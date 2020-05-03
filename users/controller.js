@@ -12,7 +12,7 @@ module.exports = router;
 
 function register(req, res, next) {
     userService.create(req.body)
-    .then(() => res.json({
+    .then(user => res.json({
         message: "User successfully created.",
         responseCode: 200,
         user: (user)
