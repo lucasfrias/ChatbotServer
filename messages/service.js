@@ -1,18 +1,15 @@
 var Request    = require("request");
-const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
     callDatabase
 };
 
-var sessionId = uuidv4();
-
 /*
 This method makes an api call to dialog flow created by the database team. A sessionID is a UUID uniquely identified for every session.
 Authorization header is required for request.
 */
-function callDatabase(message, callback){ 
-    //console.log(sessionId);
+function callDatabase(sessionId, message, callback){ 
+    console.log(sessionId);
     Request.post({
       "headers": { 
         "content-type": "application/json",

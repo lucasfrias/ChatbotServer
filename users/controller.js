@@ -12,11 +12,11 @@ module.exports = router;
 
 function register(req, res, next) {
     userService.create(req.body)
-    .then(user => user ? res.json({
+    .then(() => res.json({
         message: "User successfully created.",
         responseCode: 200,
         user: (user)
-    }) : res.status(400).json({ message: 'Username or password is incorrect' }))
+    }))
     .catch(err => next(err));
 }
 
